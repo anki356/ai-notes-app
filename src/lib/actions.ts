@@ -141,3 +141,39 @@ export async function searchNotes(query: string) {
 
   return notes;
 }
+
+export async function getGraphData() {
+  const session = await getSession();
+  if (!session) return { nodes: [], links: [] };
+
+  // Fetch nodes
+  const notes = await prisma.note.findMany({
+    where: { userId: session.userId },
+    select: { id: true, title: true, isVoice: true }
+  });
+
+  const nodes = notes.map(note => ({
+    id: note.id,
+    name: note.title,
+    group: note.isVoice ? 2 : 1
+  }));
+
+  // Fetch semantic links using vector similarity
+  const linksRaw = await prisma.$queryRawUnsafe<any[]>(
+    `SELECT a.id as source, b.id as target, (1 - (a.embedding <=> b.embedding)) as similarity
+     FROM "Note" a
+     JOIN "Note" b ON a.id < b.id
+     WHERE a."userId" = $1 AND b."userId" = $1
+     AND a.embedding IS NOT NULL AND b.embedding IS NOT NULL
+     AND (1 - (a.embedding <=> b.embedding)) > 0.75`,
+    session.userId
+  );
+
+  const links = linksRaw.map(link => ({
+    source: link.source,
+    target: link.target,
+    value: link.similarity
+  }));
+
+  return { nodes, links };
+}

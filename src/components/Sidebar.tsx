@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, LayoutGrid, Library, Sparkles, Mic, Settings, HelpCircle, Search } from "lucide-react";
+import { Plus, LayoutGrid, Library, Sparkles, Mic, Settings, HelpCircle, Search, Network } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
