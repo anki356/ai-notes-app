@@ -1,7 +1,8 @@
 "use client";
 
-import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus } from "lucide-react";
+import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus, Eye, EyeOff } from "lucide-react";
 import AIInsights from "@/components/AIInsights";
+import ReactMarkdown from "react-markdown";
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { updateNote } from "@/lib/actions";
@@ -13,6 +14,7 @@ export default function EditorPage() {
   const updateCurrentNoteTitle = useAppStore((state) => state.updateCurrentNoteTitle);
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -151,6 +153,13 @@ export default function EditorPage() {
               {isSaving ? "Syncing..." : "Saved to Backend"}
             </div>
             <div className="w-px h-6 bg-border mx-2" />
+            <button 
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+              title={isPreviewMode ? "Edit Mode" : "Preview Mode"}
+            >
+              {isPreviewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
             <Share2 className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
             <MoreVertical className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
           </div>
@@ -176,32 +185,40 @@ export default function EditorPage() {
             </div>
           </div>
 
-          <textarea 
-            ref={textareaRef}
-            value={currentNote.content}
-            onChange={handleContentChange}
-            className="w-full h-[60vh] bg-transparent border-none outline-none resize-none text-lg leading-relaxed text-foreground/90 focus:ring-0"
-            placeholder="Start writing..."
-          />
+          {isPreviewMode ? (
+            <div className="w-full h-[60vh] overflow-y-auto prose prose-slate dark:prose-invert max-w-none prose-lg">
+              <ReactMarkdown>{currentNote.content}</ReactMarkdown>
+            </div>
+          ) : (
+            <textarea 
+              ref={textareaRef}
+              value={currentNote.content}
+              onChange={handleContentChange}
+              className="w-full h-[60vh] bg-transparent border-none outline-none resize-none text-lg leading-relaxed text-foreground/90 focus:ring-0"
+              placeholder="Start writing..."
+            />
+          )}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white dark:bg-[#1E293B] border border-border rounded-2xl shadow-2xl px-6 py-3 flex items-center gap-6 z-20">
-          <div className="flex items-center gap-4">
-            <Bold onClick={() => handleFormat('bold')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
-            <Italic onClick={() => handleFormat('italic')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
-            <List onClick={() => handleFormat('list')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
+        {!isPreviewMode && (
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white dark:bg-[#1E293B] border border-border rounded-2xl shadow-2xl px-6 py-3 flex items-center gap-6 z-20">
+            <div className="flex items-center gap-4">
+              <Bold onClick={() => handleFormat('bold')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
+              <Italic onClick={() => handleFormat('italic')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
+              <List onClick={() => handleFormat('list')} className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer transition-colors" />
+            </div>
+            <div className="w-px h-4 bg-border" />
+            <div className="flex items-center gap-4">
+              <Link className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer" />
+              <ImageIcon className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer" />
+            </div>
+            <div className="w-px h-4 bg-border" />
+            <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
+              <Sparkles className="w-3.5 h-3.5" />
+              AI Insights
+            </button>
           </div>
-          <div className="w-px h-4 bg-border" />
-          <div className="flex items-center gap-4">
-            <Link className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer" />
-            <ImageIcon className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-pointer" />
-          </div>
-          <div className="w-px h-4 bg-border" />
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI Insights
-          </button>
-        </div>
+        )}
       </main>
 
       <AIInsights />

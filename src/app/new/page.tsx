@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createNote } from "@/lib/actions";
 import { useAppStore } from "@/lib/store";
-import { X, Sparkles, Save, ArrowLeft } from "lucide-react";
+import { X, Sparkles, Save, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 export default function NewNotePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const router = useRouter();
   const setCurrentNote = useAppStore((state) => state.setCurrentNote);
 
@@ -96,17 +98,32 @@ export default function NewNotePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Content</label>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
-                <Sparkles className="w-3 h-3 text-[#6366f1]" />
-                <span>AI will summarize this after saving</span>
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => setIsPreviewMode(!isPreviewMode)}
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                  title={isPreviewMode ? "Edit Mode" : "Preview Mode"}
+                >
+                  {isPreviewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+                <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
+                  <Sparkles className="w-3 h-3 text-[#6366f1]" />
+                  <span>AI will summarize this after saving</span>
+                </div>
               </div>
             </div>
-            <textarea 
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Start capturing your thoughts..."
-              className="w-full min-h-[400px] text-xl leading-relaxed bg-transparent border-none outline-none resize-none placeholder:text-gray-100 dark:placeholder:text-slate-800/50 focus:ring-0"
-            />
+            {isPreviewMode ? (
+              <div className="w-full min-h-[400px] overflow-y-auto prose prose-slate dark:prose-invert max-w-none prose-lg">
+                <ReactMarkdown>{content}</ReactMarkdown>
+              </div>
+            ) : (
+              <textarea 
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Start capturing your thoughts..."
+                className="w-full min-h-[400px] text-xl leading-relaxed bg-transparent border-none outline-none resize-none placeholder:text-gray-100 dark:placeholder:text-slate-800/50 focus:ring-0"
+              />
+            )}
           </div>
         </div>
       </main>

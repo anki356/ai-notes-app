@@ -41,7 +41,8 @@
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.5.0",
-    "zustand": "^5.0.13"
+    "zustand": "^5.0.13",
+    "@tailwindcss/typography": "^0.5.15"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
