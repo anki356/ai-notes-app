@@ -82,6 +82,12 @@ export default function Sidebar() {
           active={pathname === "/library"} 
         />
         <NavItem 
+          href="/graph" 
+          icon={<Network className="w-5 h-5" />} 
+          label="Knowledge Graph" 
+          active={pathname === "/graph"} 
+        />
+        <NavItem 
           href="/insights" 
           icon={<Sparkles className="w-5 h-5" />} 
           label="Insights" 
