@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Cognition | AI Notes App",
   description: "Intelligent note-taking for the modern era.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

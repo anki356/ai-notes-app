@@ -15,6 +15,7 @@ export default function EditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const setIsSidebarOpen = useAppStore((state) => state.setIsSidebarOpen);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -134,10 +135,10 @@ export default function EditorPage() {
 
   return (
     <div className="flex h-full min-w-0">
-      <main className="flex-1 flex flex-col min-w-0 relative">
+      <main className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
         <header className="h-14 border-b border-border flex items-center justify-between px-6 bg-white/50 dark:bg-[#0F172A]/50 backdrop-blur-sm">
           <div className="flex items-center gap-4 text-sm">
-            <Menu className="w-5 h-5 text-muted-foreground cursor-pointer lg:hidden" />
+            <Menu onClick={() => setIsSidebarOpen(true)} className="w-5 h-5 text-muted-foreground cursor-pointer lg:hidden hover:text-foreground" />
             <div className="flex items-center gap-2 text-muted-foreground">
               <span>Workspace</span>
               <span className="text-gray-300">/</span>

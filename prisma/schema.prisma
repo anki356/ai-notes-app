@@ -12,6 +12,16 @@ datasource db {
   extensions = [pgvector(map: "vector")]
 }
 
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  notes     Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Note {
   id        String   @id @default(cuid())
   title     String
@@ -19,6 +29,8 @@ model Note {
   summary   String?
   isVoice   Boolean  @default(false)
   embedding Unsupported("vector(768)")?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

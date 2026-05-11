@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Plus, Filter, MoreVertical, FileText, Clock, Tag, Sparkles } from "lucide-react";
+import { Search, Plus, Filter, MoreVertical, FileText, Clock, Tag, Sparkles, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getNotes, searchNotes } from "@/lib/actions";
 import { useAppStore } from "@/lib/store";
@@ -16,6 +16,7 @@ export default function Library() {
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const setIsSidebarOpen = useAppStore((state) => state.setIsSidebarOpen);
 
   useEffect(() => {
     setMounted(true);
@@ -53,15 +54,18 @@ export default function Library() {
   return (
     <div className="flex flex-col h-full bg-[#F8FAFC] dark:bg-[#0F172A]">
       {/* Header */}
-      <header className="h-20 flex items-center justify-between px-10 border-b border-border bg-white/50 dark:bg-transparent backdrop-blur-sm">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">Library</h2>
-          <span className="text-muted-foreground text-sm font-medium">
-            {isLoading ? "Loading..." : `${notes.length} Notes`}
-          </span>
+      <header className="min-h-20 flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 py-4 border-b border-border bg-white/50 dark:bg-transparent backdrop-blur-sm gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <Menu onClick={() => setIsSidebarOpen(true)} className="w-6 h-6 text-muted-foreground cursor-pointer lg:hidden hover:text-foreground shrink-0" />
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Library</h2>
+            <span className="text-muted-foreground text-sm font-medium">
+              {isLoading ? "Loading..." : `${notes.length} Notes`}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="relative w-[300px]">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="relative w-full sm:w-[300px]">
             <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${isSearching ? "text-blue-500" : "text-muted-foreground"}`} />
             <input 
               type="text" 
@@ -77,7 +81,7 @@ export default function Library() {
               </div>
             )}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-border text-sm font-semibold hover:bg-gray-50 transition-colors">
+          <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-border text-sm font-semibold hover:bg-gray-50 transition-colors">
             <Filter className="w-4 h-4" />
             <span>Filter</span>
           </button>
@@ -85,7 +89,7 @@ export default function Library() {
       </header>
 
       {/* Grid of Notes */}
-      <main className="flex-1 overflow-y-auto p-10">
+      <main className="flex-1 overflow-y-auto p-6 lg:p-10">
         {isLoading && notes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
