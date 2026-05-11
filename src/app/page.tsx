@@ -1,6 +1,6 @@
 "use client";
 
-import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus, Eye, EyeOff } from "lucide-react";
+import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus, Eye, EyeOff, Edit3 } from "lucide-react";
 import AIInsights from "@/components/AIInsights";
 import ReactMarkdown from "react-markdown";
 import { useAppStore } from "@/lib/store";
@@ -155,12 +155,12 @@ export default function EditorPage() {
             <div className="w-px h-6 bg-border mx-2" />
             <button 
               onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
-              title={isPreviewMode ? "Edit Mode" : "Preview Mode"}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-muted-foreground hover:text-foreground"
             >
-              {isPreviewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {isPreviewMode ? <Edit3 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              <span className="text-sm font-medium">{isPreviewMode ? "Edit" : "Preview"}</span>
             </button>
-            <Share2 className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+            <Share2 className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors ml-2" />
             <MoreVertical className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
           </div>
         </header>
@@ -186,15 +186,15 @@ export default function EditorPage() {
           </div>
 
           {isPreviewMode ? (
-            <div className="w-full h-[60vh] overflow-y-auto prose prose-slate dark:prose-invert max-w-none prose-lg">
-              <ReactMarkdown>{currentNote.content}</ReactMarkdown>
+            <div className="prose prose-lg dark:prose-invert max-w-none w-full min-h-[60vh] pb-32 prose-headings:font-bold prose-a:text-blue-600 prose-p:leading-relaxed">
+              <ReactMarkdown>{currentNote.content || "*Nothing to preview yet...*"}</ReactMarkdown>
             </div>
           ) : (
             <textarea 
               ref={textareaRef}
               value={currentNote.content}
               onChange={handleContentChange}
-              className="w-full h-[60vh] bg-transparent border-none outline-none resize-none text-lg leading-relaxed text-foreground/90 focus:ring-0"
+              className="w-full h-[60vh] bg-transparent border-none outline-none resize-none text-lg leading-relaxed text-foreground/90 focus:ring-0 pb-32"
               placeholder="Start writing..."
             />
           )}
