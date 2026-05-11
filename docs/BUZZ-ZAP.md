@@ -1,0 +1,7 @@
+# BUZZ-ZAP: Bug Knowledge Base
+
+| ID | Title | Symptom | Root Cause | Fix | Detection | Linked Test | Status |
+|----|-------|---------|------------|-----|-----------|-------------|--------|
+| B-001 | Tailwind CSS PostCSS Plugin Error | Error: It looks like you're trying to use `tailwindcss` directly as a PostCSS plugin. | Tailwind CSS v4 moved PostCSS plugin to a separate package and changed syntax. | Install `@tailwindcss/postcss`, update `postcss.config.mjs`, and use `@import "tailwindcss"` + `@theme` in `globals.css`. | Build/Dev server failure with globals.css error. | Manual check | Fixed |
+| B-002 | Prisma 7 Initialization Error | `PrismaClient needs to be constructed with a non-empty, valid PrismaClientOptions` | Prisma 7 requires explicit driver adapters for all databases, including SQLite. | Install `@prisma/adapter-better-sqlite3`, update `db.ts` to use the adapter, and use custom generator output. | Server Action failure during DB write. | `test-db.ts` | Fixed |
+| B-003 | Microphone NotAllowedError | `NotAllowedError: Permission denied` | Browser blocked microphone access in non-secure context or user rejected permission. | Added descriptive error handling and UI feedback to guide the user to browser settings. | Console error on record. | Manual check | Handled |

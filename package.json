@@ -1,0 +1,63 @@
+{
+  "name": "ai-notes-app",
+  "version": "1.0.0",
+  "description": "An intelligent, privacy-first note-taking application featuring Markdown editing, AI summaries, semantic search, and voice notes.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "npm install pg @prisma/adapter-pg @types/pg && npx prisma generate && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest"
+  },
+  "bugs": {
+    "url": "https://github.com/anki356/ai-notes-app/issues"
+  },
+  "homepage": "https://github.com/anki356/ai-notes-app#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.105.4",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/lodash": "^4.17.24",
+    "@types/pg": "^8.20.0",
+    "better-sqlite3": "^12.9.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "lodash": "^4.18.1",
+    "lucide-react": "^1.14.0",
+    "next": "^16.2.6",
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-markdown": "^10.1.0",
+    "tailwind-merge": "^3.5.0",
+    "zustand": "^5.0.13"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.6.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.6",
+    "jsdom": "^29.1.1",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  }
+}
