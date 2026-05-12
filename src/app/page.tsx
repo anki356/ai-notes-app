@@ -196,13 +196,14 @@ export default function EditorPage() {
               <span>{currentNote.content.split(/\s+/).length} words</span>
             </div>
           </div>
-          
+
           {showVoiceRecorder && (
             <div className="mb-12">
               <VoiceRecorder 
                 autoSave={false} 
                 mode="inline"
                 onTranscriptComplete={(transcribedText) => {
+                  if (!currentNote) return;
                   const newContent = currentNote.content ? `${currentNote.content}\n\n${transcribedText}` : transcribedText;
                   updateCurrentNoteContent(newContent);
                   if (currentNote.id) {
@@ -251,7 +252,6 @@ export default function EditorPage() {
       </main>
 
       <AIInsights />
-      {/* Remove the floating VoiceRecorder since we have the inline one now */}
     </div>
   );
 }
