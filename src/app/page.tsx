@@ -196,6 +196,23 @@ export default function EditorPage() {
               <span>{currentNote.content.split(/\s+/).length} words</span>
             </div>
           </div>
+          
+          {showVoiceRecorder && (
+            <div className="mb-12">
+              <VoiceRecorder 
+                autoSave={false} 
+                mode="inline"
+                onTranscriptComplete={(transcribedText) => {
+                  const newContent = currentNote.content ? `${currentNote.content}\n\n${transcribedText}` : transcribedText;
+                  updateCurrentNoteContent(newContent);
+                  if (currentNote.id) {
+                    debouncedSave(currentNote.id, currentNote.title, newContent);
+                  }
+                  setShowVoiceRecorder(false);
+                }} 
+              />
+            </div>
+          )}
 
           {isPreviewMode ? (
             <div className="prose prose-lg dark:prose-invert max-w-none w-full min-h-[60vh] pb-32 prose-headings:font-bold prose-a:text-blue-600 prose-p:leading-relaxed">
@@ -234,16 +251,7 @@ export default function EditorPage() {
       </main>
 
       <AIInsights />
-      <VoiceRecorder 
-        autoSave={false} 
-        onTranscriptComplete={(transcribedText) => {
-          const newContent = currentNote.content ? `${currentNote.content}\n\n${transcribedText}` : transcribedText;
-          updateCurrentNoteContent(newContent);
-          if (currentNote.id) {
-            debouncedSave(currentNote.id, currentNote.title, newContent);
-          }
-        }} 
-      />
+      {/* Remove the floating VoiceRecorder since we have the inline one now */}
     </div>
   );
 }
