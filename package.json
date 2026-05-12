@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "An intelligent, privacy-first note-taking application featuring Markdown editing, AI summaries, semantic search, and voice notes.",
   "type": "module",
-  "main":"src/page.tsx",
   "scripts": {
     "dev": "npm install pg @prisma/adapter-pg @types/pg && npx prisma generate && next dev",
     "build": "next build",
