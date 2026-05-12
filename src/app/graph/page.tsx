@@ -7,7 +7,7 @@ import { Menu, Network } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 
-import type { ForceGraphGenericInstance, GraphData } from "force-graph";
+import type { GraphData } from "force-graph";
 
 // Dynamically import the graph library because it uses canvas/window which breaks SSR
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
