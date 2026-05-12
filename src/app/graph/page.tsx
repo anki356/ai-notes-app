@@ -7,6 +7,8 @@ import { Menu, Network } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 
+import type { ForceGraphGenericInstance, GraphData } from "force-graph";
+
 // Dynamically import the graph library because it uses canvas/window which breaks SSR
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -15,10 +17,10 @@ const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
       <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
   ),
-});
+}) as any; // Using any for the component type to bypass complex dynamic import typing, but we'll use types for data
 
 export default function GraphPage() {
-  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
+  const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isLoading, setIsLoading] = useState(true);
   const setIsSidebarOpen = useAppStore((state) => state.setIsSidebarOpen);
   const router = useRouter();
@@ -28,7 +30,7 @@ export default function GraphPage() {
       setIsLoading(true);
       try {
         const data = await getGraphData();
-        setGraphData(data as any);
+        setGraphData(data);
       } catch (error) {
         console.error("Failed to load graph data:", error);
       } finally {

@@ -38,4 +38,4 @@
     - Graph visualization of note connections.
     - Optional cloud sync with E2E encryption.
     - Mobile-responsive design/PWA.
-- **Status:** [Planned]
+- **Status:** [In Progress] - Graph visualization skeleton fixed, pending dependency installation.
