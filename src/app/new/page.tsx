@@ -4,14 +4,16 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createNote } from "@/lib/actions";
 import { useAppStore } from "@/lib/store";
-import { X, Sparkles, Save, ArrowLeft, Eye, EyeOff, Edit3 } from "lucide-react";
+import { X, Sparkles, Save, ArrowLeft, Eye, EyeOff, Edit3, Mic } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import VoiceRecorder from "@/components/VoiceRecorder";
 
 export default function NewNotePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const router = useRouter();
   const setCurrentNote = useAppStore((state) => state.setCurrentNote);
 
@@ -73,6 +75,15 @@ export default function NewNotePage() {
             {isPreviewMode ? <Edit3 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             <span className="text-sm font-medium">{isPreviewMode ? "Edit" : "Preview"}</span>
           </button>
+          
+          <button 
+            onClick={() => setShowVoiceRecorder(!showVoiceRecorder)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${showVoiceRecorder ? "bg-red-50 text-red-600" : "hover:bg-gray-100 dark:hover:bg-slate-800 text-muted-foreground hover:text-foreground"}`}
+          >
+            <Mic className="w-4 h-4" />
+            <span className="text-sm font-medium">Voice</span>
+          </button>
+
           <div className="w-px h-6 bg-border mx-2" />
           
           <button 
@@ -113,6 +124,20 @@ export default function NewNotePage() {
                 <span>AI will summarize this after saving</span>
               </div>
             </div>
+
+            {showVoiceRecorder && (
+              <div className="mb-8">
+                <VoiceRecorder 
+                  autoSave={false} 
+                  mode="inline"
+                  onTranscriptComplete={(transcribedText) => {
+                    setContent(prev => prev ? `${prev}\n\n${transcribedText}` : transcribedText);
+                    setShowVoiceRecorder(false);
+                  }} 
+                />
+              </div>
+            )}
+
             {isPreviewMode ? (
               <div className="prose prose-lg dark:prose-invert max-w-none w-full min-h-[400px] pb-32 prose-headings:font-bold prose-a:text-blue-600 prose-p:leading-relaxed">
                 <ReactMarkdown>{content || "*Nothing to preview yet...*"}</ReactMarkdown>

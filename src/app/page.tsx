@@ -1,12 +1,13 @@
 "use client";
 
-import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus, Eye, EyeOff, Edit3 } from "lucide-react";
+import { Share2, MoreVertical, Menu, Calendar, Clock, Bold, Italic, List, Link, Image as ImageIcon, Sparkles, Plus, Eye, EyeOff, Edit3, Mic } from "lucide-react";
 import AIInsights from "@/components/AIInsights";
 import ReactMarkdown from "react-markdown";
 import { useAppStore } from "@/lib/store";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { updateNote } from "@/lib/actions";
 import debounce from "lodash/debounce";
+import VoiceRecorder from "@/components/VoiceRecorder";
 
 export default function EditorPage() {
   const currentNote = useAppStore((state) => state.currentNote);
@@ -15,6 +16,7 @@ export default function EditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const setIsSidebarOpen = useAppStore((state) => state.setIsSidebarOpen);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -161,6 +163,15 @@ export default function EditorPage() {
               {isPreviewMode ? <Edit3 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               <span className="text-sm font-medium">{isPreviewMode ? "Edit" : "Preview"}</span>
             </button>
+            
+            <button 
+              onClick={() => setShowVoiceRecorder(!showVoiceRecorder)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${showVoiceRecorder ? "bg-red-50 text-red-600" : "hover:bg-gray-100 dark:hover:bg-slate-800 text-muted-foreground hover:text-foreground"}`}
+            >
+              <Mic className="w-4 h-4" />
+              <span className="text-sm font-medium">Voice</span>
+            </button>
+
             <Share2 className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors ml-2" />
             <MoreVertical className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
           </div>
@@ -223,6 +234,16 @@ export default function EditorPage() {
       </main>
 
       <AIInsights />
+      <VoiceRecorder 
+        autoSave={false} 
+        onTranscriptComplete={(transcribedText) => {
+          const newContent = currentNote.content ? `${currentNote.content}\n\n${transcribedText}` : transcribedText;
+          updateCurrentNoteContent(newContent);
+          if (currentNote.id) {
+            debouncedSave(currentNote.id, currentNote.title, newContent);
+          }
+        }} 
+      />
     </div>
   );
 }

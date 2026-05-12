@@ -5,10 +5,16 @@ import { Mic, StopCircle, X, Sparkles, Volume2 } from "lucide-react";
 import { createNote, getNotes } from "@/lib/actions";
 import { useAppStore } from "@/lib/store";
 
-export default function VoiceRecorder() {
+interface VoiceRecorderProps {
+  onTranscriptComplete?: (transcript: string) => void;
+  autoSave?: boolean;
+  mode?: "floating" | "inline";
+}
+
+export default function VoiceRecorder({ onTranscriptComplete, autoSave = true, mode = "floating" }: VoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [time, setTime] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(mode === "inline");
   const [error, setError] = useState<string | null>(null);
   const [permissionStatus, setPermissionStatus] = useState<PermissionState | null>(null);
   const [transcript, setTranscript] = useState("");
@@ -75,19 +81,22 @@ export default function VoiceRecorder() {
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: "audio/webm" });
+        const finalContent = transcriptRef.current.trim() || "Spoken thought captured via recorder.";
         
-        // Use the captured transcript from the Ref to avoid closure issues
-        const finalContent = transcriptRef.current.trim() || "Spoken thought captured via floating recorder.";
-        
-        await createNote({
-          title: `Voice Note - ${new Date().toLocaleTimeString()}`,
-          content: finalContent,
-          isVoice: true,
-        });
-        
-        const updatedNotes = await getNotes();
-        setNotes(updatedNotes as any);
+        if (autoSave) {
+          await createNote({
+            title: `Voice Note - ${new Date().toLocaleTimeString()}`,
+            content: finalContent,
+            isVoice: true,
+          });
+          
+          const updatedNotes = await getNotes();
+          setNotes(updatedNotes as any);
+        }
+
+        if (onTranscriptComplete) {
+          onTranscriptComplete(finalContent);
+        }
         
         stream.getTracks().forEach((track) => track.stop());
         setIsOpen(false);
@@ -122,7 +131,7 @@ export default function VoiceRecorder() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  if (!isOpen) {
+  if (!isOpen && mode === "floating") {
     return (
       <button 
         onClick={() => setIsOpen(true)}
@@ -133,14 +142,23 @@ export default function VoiceRecorder() {
     );
   }
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed bottom-8 right-8 w-80 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-border p-6 z-50 animate-in slide-in-from-bottom-10 duration-300">
-      <button 
-        onClick={() => setIsOpen(false)}
-        className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-      >
-        <X className="w-4 h-4 text-muted-foreground" />
-      </button>
+    <div className={`
+      ${mode === "floating" ? "fixed bottom-8 right-8 w-80" : "w-full"} 
+      bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-border p-6 z-50 
+      ${mode === "floating" ? "animate-in slide-in-from-bottom-10" : "animate-in fade-in"} 
+      duration-300
+    `}>
+      {mode === "floating" && (
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+        >
+          <X className="w-4 h-4 text-muted-foreground" />
+        </button>
+      )}
 
       <div className="flex flex-col items-center gap-6 mt-2">
         <div className="flex items-center gap-3">
